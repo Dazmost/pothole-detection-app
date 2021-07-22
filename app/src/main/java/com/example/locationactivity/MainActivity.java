@@ -2,6 +2,7 @@ package com.example.locationactivity;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -26,15 +27,19 @@ import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    public static final int DEFAULT_UPDATE_INTERVAL = 30;
-    public static final int FAST_UPDATE_INTERVAL = 5;
+    public static final int DEFAULT_UPDATE_INTERVAL = 1;//30
+    public static final int FAST_UPDATE_INTERVAL = 1;//5
     public static final int PERMSSIONS_FINE_LOCATION = 99;
 
 //    private HomeViewModel homeViewModel;
@@ -43,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     TextView tv_lat, tv_lon, tv_altitude, tv_accuracy, tv_speed, tv_sensor, tv_updates, tv_address;
 
     Switch sw_locationupdates, sw_gps;
+
+    Button btn_deleteSQL;
 
     // variable to remember if we are tracking location or not
     boolean updateOn = false;
@@ -54,6 +61,11 @@ public class MainActivity extends AppCompatActivity {
 
     // Google's API for location services. The majority of the app functions using the class.
     FusedLocationProviderClient fusedLocationProviderClient;
+
+    //SQL
+    public ArrayList<Datapoint> datapoints;
+    DatabaseHelper myDB;
+    int id_test = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,14 +94,17 @@ public class MainActivity extends AppCompatActivity {
         tv_address = findViewById(R.id.tv_address);
         sw_gps = findViewById(R.id.sw_gps);
         sw_locationupdates = findViewById(R.id.sw_locationsupdates);
+        btn_deleteSQL = findViewById(R.id.btn_deleteSQL);
 
         // set all properties of LocationRequest
 
         locationRequest = new LocationRequest();
 
         // how often does the default location check occur?
+        //setInterval(long) means - set the interval in which you want to get locations
         locationRequest.setInterval(1000 * DEFAULT_UPDATE_INTERVAL);
         // how often does the location check occur when set to the most frequent update?
+        //setFastestInterval(long) means - if a location is available sooner you can get it (i.e. another app is using the location services).
         locationRequest.setFastestInterval(1000 * FAST_UPDATE_INTERVAL);
 
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
@@ -134,7 +149,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        btn_deleteSQL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DeleteAll();
+            }
+        });
+
         updateGPS();
+
+        datapoints = new ArrayList<Datapoint>();
+        //SQL management
+        myDB = new DatabaseHelper(this);
+//        datapoints=getAll(datapoints);
+        //^SQL management
     }
 
     private void startLocationUpdates() {
@@ -235,6 +263,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUIValues(Location location) {
+        //Update SQL v///////////////////////////////////////////////
+        id_test = id_test+1;
+        String pothole_test = "NA";
+
+        Date today = Calendar.getInstance().getTime();
+        long currentTimeInMilli = today.getTime();
+
+        AddData(id_test, currentTimeInMilli, location.getLongitude(),
+                location.getLatitude(),pothole_test);
+        //Update SQL ^///////////////////////////////////////////////
 
         // update all of the text view objects with a new location
         tv_lat.setText(String.valueOf(location.getLatitude()));
@@ -266,4 +304,82 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+
+
+    //SQL METHODS
+    public void DeleteData(int mId){
+        Integer deletedRows = myDB.deleteData(Integer.toString(mId));
+        if (deletedRows>0){
+            Toast.makeText(this,"Data Deleted", Toast.LENGTH_SHORT).show();
+        }else {
+            Toast.makeText(this, "Data not Deleted", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void DeleteAll(){
+        Integer deletedRows = myDB.deleteAll();
+        if (deletedRows>0){
+            Toast.makeText(this,"All Data Deleted: " + deletedRows + " rows", Toast.LENGTH_SHORT).show();
+        }else {
+            Toast.makeText(this, "All Data not Deleted", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
+
+    //public boolean updateData(String id, String time, String longitude, String latitude, String pothole){
+    public void UpdateData(int mId, long mTime, double mLongitude, double mLatitude, String mPothole){
+        boolean isUpdate = myDB.updateData(Integer.toString(mId),
+                Long.toString(mTime), Double.toString(mLongitude), Double.toString(mLatitude), mPothole);
+        if (isUpdate==true){
+            Toast.makeText(this,"Data Updated", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this,"Data not Updated", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void AddData(int mId, long mTime, Double mLongitude, Double mLatitude, String mPothole){
+
+        boolean isInserted = myDB.insertData(Integer.toString(mId),
+                Long.toString(mTime), Double.toString(mLongitude), Double.toString(mLatitude), mPothole);
+
+        if (isInserted==true){
+            Toast.makeText(this,"Data Inserted", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this,"Data not Inserted", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public ArrayList<Datapoint> getAll(ArrayList<Datapoint> patientList){
+        Cursor res = myDB.getAllData();
+        if (res.getCount()==0){
+            //means no data is available
+            //error
+            Toast.makeText(this,"No Data", Toast.LENGTH_SHORT).show();
+            return new ArrayList<Datapoint>();
+        }else{
+
+            StringBuffer buffer = new StringBuffer();
+            //get all data one by one through res object
+            while(res.moveToNext()){
+                buffer.append("Id : "+res.getString(0)+"\n");
+                buffer.append("Time : " +res.getString(1)+"\n");
+                buffer.append("Longitude : "+res.getString(2)+"\n");
+                buffer.append("Latitude : "+res.getString(3)+"\n");
+                buffer.append("Pothole : "+res.getString(4)+"\n\n");
+
+                int id=Integer.parseInt(res.getString(0));
+                long time = Long.parseLong(res.getString(1));
+                double longitude =Double.parseDouble(res.getString(2));
+                double latitude =Double.parseDouble(res.getString(3));
+                String pothole = res.getString(4);
+
+                patientList.add(new Datapoint(id,time,longitude,latitude,pothole));
+            }
+        }
+        return patientList;
+    }
+    //^SQL METHODS
 }
