@@ -346,7 +346,7 @@ public class MainActivity extends AppCompatActivity {
                 Long.toString(mTime), Double.toString(mLongitude), Double.toString(mLatitude), mPothole);
 
         if (isInserted==true){
-            Toast.makeText(this,"Data Inserted", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Data Inserted", Toast.LENGTH_SHORT/4).show();
         }else{
             Toast.makeText(this,"Data not Inserted", Toast.LENGTH_SHORT).show();
         }
