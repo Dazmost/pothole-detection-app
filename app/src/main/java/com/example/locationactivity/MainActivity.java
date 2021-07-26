@@ -67,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
     DatabaseHelper myDB;
     int id_test = 0;
 
+    Bluetooth myBt;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,6 +165,9 @@ public class MainActivity extends AppCompatActivity {
         myDB = new DatabaseHelper(this);
 //        datapoints=getAll(datapoints);
         //^SQL management
+
+        myBt = new Bluetooth();
+        myBt.beginListenForData();
     }
 
     private void startLocationUpdates() {
