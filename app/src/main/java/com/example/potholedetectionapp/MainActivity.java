@@ -46,11 +46,11 @@ import java.util.Set;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
+
+    //LOCATION VARIABLES v//////////////////////////////////////////////////////////////////////////
     public static final int DEFAULT_UPDATE_INTERVAL = 1;//30
     public static final int FAST_UPDATE_INTERVAL = 1;//5
     public static final int PERMSSIONS_FINE_LOCATION = 99;
-
-//    private HomeViewModel homeViewModel;
 
     // references to the UI elements
     TextView tv_lat, tv_lon, tv_altitude, tv_accuracy, tv_speed, tv_sensor, tv_updates, tv_address;
@@ -69,13 +69,19 @@ public class MainActivity extends AppCompatActivity {
 
     // Google's API for location services. The majority of the app functions using the class.
     FusedLocationProviderClient fusedLocationProviderClient;
+    //LOCATION VARIABLES ^//////////////////////////////////////////////////////////////////////////
 
-    //SQL
+
+
+    //SQL VARIABLES v///////////////////////////////////////////////////////////////////////////////
     public ArrayList<Datapoint> datapoints;
     DatabaseHelper myDB;
     int id_test = 0;
+    //SQL VARIABLES ^///////////////////////////////////////////////////////////////////////////////
 
-    //Bluetooth
+
+
+    //BLUETOOTH VARIABLES v/////////////////////////////////////////////////////////////////////////
     private final String DEVICE_ADDRESS="00:14:03:06:92:C3";
     private final UUID PORT_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");//Serial Port Service ID
     private BluetoothDevice device;
@@ -91,24 +97,16 @@ public class MainActivity extends AppCompatActivity {
     byte buffer[];
     int bufferPosition;
     boolean stopThread;
+    //BLUETOOTH VARIABLES ^/////////////////////////////////////////////////////////////////////////
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
 
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
+        //LOCATION UI v/////////////////////////////////////////////////////////////////////////////
         //give each UI variable a value
         tv_lat = findViewById(R.id.tv_lat);
         tv_lon = findViewById(R.id.tv_lon);
@@ -123,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
         btn_deleteSQL = findViewById(R.id.btn_deleteSQL);
 
         // set all properties of LocationRequest
-
         locationRequest = new LocationRequest();
 
         // how often does the default location check occur?
@@ -175,6 +172,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        updateGPS();
+        //LOCATION UI ^/////////////////////////////////////////////////////////////////////////////
+
+
+
+        //SQL UI v//////////////////////////////////////////////////////////////////////////////////
         btn_deleteSQL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -182,26 +185,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        updateGPS();
-
         datapoints = new ArrayList<Datapoint>();
-        //SQL management
         myDB = new DatabaseHelper(this);
-//        datapoints=getAll(datapoints);
-        //^SQL management
+        //datapoints=getAll(datapoints);
+        //SQL UI^///////////////////////////////////////////////////////////////////////////////////
 
 
-        //BLUETOOTH UI v//////////////////
+
+        //BLUETOOTH UI v////////////////////////////////////////////////////////////////////////////
         startButton = (Button) findViewById(R.id.start);
-//        sendButton = (Button) findViewById(R.id.buttonSend);
+        //sendButton = (Button) findViewById(R.id.buttonSend);
         clearButton = (Button) findViewById(R.id.clear);
         stopButton = (Button) findViewById(R.id.stop);
-//        editText = (EditText) findViewById(R.id.editText);
+        //editText = (EditText) findViewById(R.id.editText);
         textView = (TextView) findViewById(R.id.bluetooth_text);
         setUiEnabled(false);
-        //BLUETOOTH UI ^//////////////////
+        //BLUETOOTH UI ^////////////////////////////////////////////////////////////////////////////
     }
 
+
+
+    //LOCATION METHODS v////////////////////////////////////////////////////////////////////////////
     private void startLocationUpdates() {
         tv_updates.setText("Location is being tracked");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -341,10 +345,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+    //LOCATION METHODS ^////////////////////////////////////////////////////////////////////////////
 
 
 
-    //SQL METHODS//////////////////////////////////
+    //SQL METHODS///////////////////////////////////////////////////////////////////////////////////
     public void DeleteData(int mId){
         Integer deletedRows = myDB.deleteData(Integer.toString(mId));
         if (deletedRows>0){
@@ -362,9 +367,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "All Data not Deleted", Toast.LENGTH_SHORT).show();
         }
     }
-
-
-
 
     //public boolean updateData(String id, String time, String longitude, String latitude, String pothole){
     public void UpdateData(int mId, long mTime, double mLongitude, double mLatitude, String mPothole){
@@ -418,17 +420,17 @@ public class MainActivity extends AppCompatActivity {
         }
         return patientList;
     }
-    //^SQL METHODS//////////////////////////////////
+    //^SQL METHODS//////////////////////////////////////////////////////////////////////////////////
 
 
-    //BLUETOOTH v/////////////////////////////////
 
+    //BLUETOOTH METHODSv////////////////////////////////////////////////////////////////////////////
     public void setUiEnabled(boolean bool)
     {
-//        this.startButton.setEnabled(!bool);
-////        sendButton.setEnabled(bool);
-//        this.stopButton.setEnabled(bool);
-//        this.textView.setEnabled(bool);
+        //this.startButton.setEnabled(!bool);
+        //sendButton.setEnabled(bool);
+        //this.stopButton.setEnabled(bool);
+        //this.textView.setEnabled(bool);
     }
 
     public boolean BTinit()
@@ -506,13 +508,13 @@ public class MainActivity extends AppCompatActivity {
                 deviceConnected=true;
                 beginListenForData();
 
-//                String string2 = "r";
-//                    string2.concat("\n");
-//                try {
-//                 outputStream.write(string2.getBytes());
-//                } catch (IOException e) {
-//                  e.printStackTrace();
-//                }
+                //String string2 = "r";
+                //    string2.concat("\n");
+                //try {
+                // outputStream.write(string2.getBytes());
+                //} catch (IOException e) {
+                //  e.printStackTrace();
+                //}
 
                 textView.append("\nConnection Opened!\n");
 
@@ -551,23 +553,23 @@ public class MainActivity extends AppCompatActivity {
                             final Float temp3 = Float.parseFloat(temp);
                             final Float humid3 = Float.parseFloat(humid);
 
-//                            byte[] tempNum = Arrays.copyOfRange(rawBytes,0,5 );
-//                            byte[] humidNum = Arrays.copyOfRange(rawBytes,5,10 );
-//                            final String temp2 =new String(tempNum,"UTF-8");
-//                            final String humid2 =new String(humidNum,"UTF-8");
+                            //byte[] tempNum = Arrays.copyOfRange(rawBytes,0,5 );
+                            //byte[] humidNum = Arrays.copyOfRange(rawBytes,5,10 );
+                            //final String temp2 =new String(tempNum,"UTF-8");
+                            //final String humid2 =new String(humidNum,"UTF-8");
 
-//                           final String temp4 =new String(string.substring(0,1));
+                           //final String temp4 =new String(string.substring(0,1));
 
                             handler.post(new Runnable() {
                                 public void run()
                                 {
-//                                    textView.append(String.valueOf(dataLength));
-//                                    textView.setText("");
+                                    //textView.append(String.valueOf(dataLength));
+                                    //textView.setText("");
 
-//                                    if (seeData) {
-//                                        textView.append(temp2);
-//                                        seeData = false;
-//                                    }
+                                    //if (seeData) {
+                                    //    textView.append(temp2);
+                                    //    seeData = false;
+                                    //}
 
                                     textView.append ("Temp = ");
                                     textView.append(String.valueOf(temp3));
@@ -594,19 +596,19 @@ public class MainActivity extends AppCompatActivity {
         thread.start();
     }
 
-//    public void onClickSend(View view) {
-//        String string = editText.getText().toString();
-//        string.concat("\n");
-//          String string2 = ("r");
-//            string.concat("\n");
-//        try {
-//            outputStream.write(string.getBytes());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        textView.append("\nMonitor Start:"+string+"\n");
-//
-//    }
+    //public void onClickSend(View view) {
+    //    String string = editText.getText().toString();
+    //    string.concat("\n");
+    //      String string2 = ("r");
+    //        string.concat("\n");
+    //    try {
+    //        outputStream.write(string.getBytes());
+    //    } catch (IOException e) {
+    //        e.printStackTrace();
+    //    }
+    //    textView.append("\nMonitor Start:"+string+"\n");
+
+    //}
 
     public void onClickStop(View view) throws IOException {
         stopThread = true;
@@ -622,5 +624,5 @@ public class MainActivity extends AppCompatActivity {
         textView.setText("");
     }
 
-    //BLUETOOTH ^/////////////////////////////////
+    //BLUETOOTH METHODS^////////////////////////////////////////////////////////////////////////////
 }
