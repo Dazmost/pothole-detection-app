@@ -288,9 +288,9 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(Location location) {
                     // we got permission. Put the values of location. XXX into the UI components
-//                    if (location !=null) {
-                    updateUIValues(location);
-//                    }
+                    if (location !=null) {
+                        updateUIValues(location);
+                    }
                 }
             });
         }else{
