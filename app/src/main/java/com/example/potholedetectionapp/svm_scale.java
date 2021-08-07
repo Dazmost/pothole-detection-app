@@ -1,9 +1,7 @@
-package com.example.locationactivity;
+package com.example.potholedetectionapp;
 
-import com.example.locationactivity.libsvm.*;
 import java.io.*;
 import java.util.*;
-import java.text.DecimalFormat;
 
 class svm_scale
 {

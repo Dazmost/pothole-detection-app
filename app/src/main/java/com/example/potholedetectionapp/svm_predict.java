@@ -1,6 +1,6 @@
-package com.example.locationactivity;
+package com.example.potholedetectionapp;
 
-import com.example.locationactivity.libsvm.*;
+import com.example.potholedetectionapp.libsvm.*;
 import java.io.*;
 import java.util.*;
 

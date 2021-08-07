@@ -3,7 +3,7 @@
 
 
 
-package com.example.locationactivity.libsvm;
+package com.example.potholedetectionapp.libsvm;
 import java.io.*;
 import java.util.*;
 

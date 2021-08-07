@@ -1,4 +1,4 @@
-package com.example.locationactivity.libsvm;
+package com.example.potholedetectionapp.libsvm;
 public class svm_parameter implements Cloneable,java.io.Serializable
 {
 	/* svm_type */

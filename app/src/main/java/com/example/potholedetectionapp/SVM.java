@@ -1,4 +1,4 @@
-package com.example.locationactivity;
+package com.example.potholedetectionapp;
 
 import android.os.Build;
 
@@ -11,11 +11,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import com.example.locationactivity.libsvm.svm_model;
-import com.example.locationactivity.libsvm.svm;
-import com.example.locationactivity.libsvm.svm_node;
-import com.example.locationactivity.libsvm.svm_parameter;
-import com.example.locationactivity.libsvm.svm_problem;
+import com.example.potholedetectionapp.libsvm.svm_model;
+import com.example.potholedetectionapp.libsvm.svm;
+import com.example.potholedetectionapp.libsvm.svm_node;
+import com.example.potholedetectionapp.libsvm.svm_parameter;
+import com.example.potholedetectionapp.libsvm.svm_problem;
 
 
 public class SVM {
