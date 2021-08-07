@@ -1,7 +1,7 @@
 //
 // svm_model
 //
-package com.example.locationactivity.libsvm;
+package com.example.potholedetectionapp.libsvm;
 public class svm_model implements java.io.Serializable
 {
 	public svm_parameter param;	// parameter

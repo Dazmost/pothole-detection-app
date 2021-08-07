@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.locationactivity">
+    package="com.example.potholedetectionapp">
     <!-- To request foreground location access, declare one of these permissions. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LocationActivity">
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.potholedetectionapp.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.LocationActivity.NoActionBar">
             <intent-filter>

@@ -1,4 +1,4 @@
-package com.example.locationactivity;
+package com.example.potholedetectionapp;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package com.example.locationactivity;
+package com.example.potholedetectionapp;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
