@@ -215,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //BLUETOOTH UI v////////////////////////////////////////////////////////////////////////////
-        startButton = (Button) findViewById(R.id.start);
+        startButton = (Button) findViewById(R.id.connect);
         //sendButton = (Button) findViewById(R.id.buttonSend);
         clearButton = (Button) findViewById(R.id.clear);
         stopButton = (Button) findViewById(R.id.stop);
@@ -458,10 +458,10 @@ public class MainActivity extends AppCompatActivity {
     //BLUETOOTH METHODSv////////////////////////////////////////////////////////////////////////////
     public void setUiEnabled(boolean bool)
     {
-        //this.startButton.setEnabled(!bool);
-        //sendButton.setEnabled(bool);
-        //this.stopButton.setEnabled(bool);
-        //this.textView.setEnabled(bool);
+        this.startButton.setEnabled(!bool);
+//        sendButton.setEnabled(bool);
+        this.stopButton.setEnabled(bool);
+        this.textView.setEnabled(bool);
     }
 
     public boolean BTinit()
