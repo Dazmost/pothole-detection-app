@@ -200,13 +200,13 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(IMqttToken asyncActionToken) {
                                 // We are connected
-                                Toast.makeText(MainActivity.this, "Connected to MQTT broker", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "Connected to MQTT broker", Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
                             public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                                 // Something went wrong e.g. connection timeout or firewall problems
-                                Toast.makeText(MainActivity.this, "Not connected to MQTT broker", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "Not connected to MQTT broker", Toast.LENGTH_SHORT).show();
                             }
                         });
                     } catch (MqttException e) {
