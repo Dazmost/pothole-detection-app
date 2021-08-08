@@ -4,8 +4,10 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
@@ -13,6 +15,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.example.potholedetectionapp.libsvm.svm_model;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -21,6 +24,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -35,8 +39,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -45,6 +51,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.example.potholedetectionapp.SVM.normalize_features;
+import static com.example.potholedetectionapp.SVM.svmPredict;
+import static com.example.potholedetectionapp.SVM.svm_load_model;
+
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends AppCompatActivity {
 
     //LOCATION VARIABLES v//////////////////////////////////////////////////////////////////////////
@@ -99,12 +110,23 @@ public class MainActivity extends AppCompatActivity {
     boolean stopThread;
     //BLUETOOTH VARIABLES ^/////////////////////////////////////////////////////////////////////////
 
-
+    //SVM VARIABLES v///////////////////////////////////////////////////////////////////////////////
+    AssetManager am;
+    svm_model test_load_model;
+    //SVM VARIABLES ^///////////////////////////////////////////////////////////////////////////////
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //AssetManager am = getAssets();
+        try {
+            test_load_model = svm_load_model("svm_model", this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
         //LOCATION UI v/////////////////////////////////////////////////////////////////////////////
         //give each UI variable a value
@@ -202,6 +224,15 @@ public class MainActivity extends AppCompatActivity {
         setUiEnabled(false);
         //BLUETOOTH UI ^////////////////////////////////////////////////////////////////////////////
     }
+
+//    public BufferedReader svm_load_model() throws IOException
+//    {
+//        AssetManager am = this.getAssets();
+//        InputStream is = am.open("testing.txt");
+//        //return svm_load_model(new BufferedReader(new FileReader(model_file_name)));
+////        InputStream inputStream = getAssets().open("testing.txt");
+//        return new svm_load_model(BufferedReader(new InputStreamReader(is)));//contextApp.getAssets()
+//    }
 
 
 
@@ -561,6 +592,7 @@ public class MainActivity extends AppCompatActivity {
                            //final String temp4 =new String(string.substring(0,1));
 
                             handler.post(new Runnable() {
+                                @RequiresApi(api = Build.VERSION_CODES.N)
                                 public void run()
                                 {
                                     //textView.append(String.valueOf(dataLength));
@@ -571,6 +603,28 @@ public class MainActivity extends AppCompatActivity {
                                     //    seeData = false;
                                     //}
 
+
+                                    //SVM v//////////////////////////////////////////////////////////
+                                    //38	445	2733	203	389	3031 Label:1
+                                    //2	6	2174	-7	6	2183 Label: 0
+                                    //313	-59	2207	302	-198	2276 Label:1
+                                    //178	-98	2250	325	16	2126 Label:1
+                                    //-78	26	2194	-54	53	2142 Label:0
+                                    // Feature[feature_index][feature_value]
+                                    double[][] features = new double[1][6];
+                                    features[0][0] = 38;
+                                    features[0][1] = 445;
+                                    features[0][2] = 2733;
+                                    features[0][3] = 203;
+                                    features[0][4] = 389;
+                                    features[0][5] = 3031;
+
+                                    normalize_features(features);
+                                    double[] ypred = svmPredict(features, test_load_model);
+                                    System.out.println("(Actual:" + 1 + " Prediction:" + ypred[0] + ")");
+                                    //SVM ^//////////////////////////////////////////////////////////
+
+                                    textView.setText("");//ADDED TO CLEAR TEXT
                                     textView.append ("Temp = ");
                                     textView.append(String.valueOf(temp3));
                                     textView.append (" Humidity = ");
@@ -579,6 +633,7 @@ public class MainActivity extends AppCompatActivity {
                                         textView.append (" Too High!");
                                     }
                                     textView.append ("\n");
+                                    textView.append ("(Actual:" + 1 + " Prediction:" + ypred[0] + ")");
                                 }
                             });
 

@@ -10,6 +10,7 @@
         android:id="@+id/tv_labellat"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:text="Lat:"
         app:layout_constraintStart_toStartOf="parent"
@@ -28,6 +29,7 @@
         android:id="@+id/tv_labellon"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="lon:"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,6 +48,7 @@
         android:id="@+id/tv_labelaltitude"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Altitude:"
         app:layout_constraintStart_toStartOf="parent"
@@ -63,6 +66,7 @@
         android:id="@+id/tv_labelaccuracy"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Accuracy:"
         app:layout_constraintStart_toStartOf="parent"
@@ -80,6 +84,7 @@
         android:id="@+id/tv_labelspeed"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Speed:"
         app:layout_constraintStart_toStartOf="parent"
@@ -97,6 +102,7 @@
         android:id="@+id/tv_labelsensor"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Sensor:"
         app:layout_constraintStart_toStartOf="parent"
@@ -114,6 +120,7 @@
         android:id="@+id/tv_labelupdates"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:text="Updates:"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sw_locationsupdates" />
@@ -149,8 +156,12 @@
 
     <TextView
         android:id="@+id/tv_address"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxLines="2"
+        android:layout_marginRight="28dp"
+        android:layout_marginLeft="118dp"
+        app:layout_constraintLeft_toRightOf="@id/tv_lbladdress"
         app:layout_constraintStart_toEndOf="@+id/tv_lbladdress"
         app:layout_constraintTop_toTopOf="@+id/tv_lbladdress" />
 
@@ -158,6 +169,7 @@
         android:id="@+id/tv_lbladdress"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Address:"
         app:layout_constraintStart_toStartOf="parent"
@@ -167,29 +179,39 @@
         android:id="@+id/divider"
         android:layout_width="409dp"
         android:layout_height="1dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:background="?android:attr/listDivider"
         app:layout_constraintTop_toBottomOf="@+id/tv_address"
+        tools:layout_editor_absoluteX="1dp" />
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="409dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@+id/tv_sensor"
         tools:layout_editor_absoluteX="1dp" />
 
     <Button
         android:id="@+id/btn_deleteSQL"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="132dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginStart="128dp"
+        android:layout_marginTop="16dp"
         android:text="Delete SQL"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_sensor" />
+        app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
     <Button
         android:id="@+id/connect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="8dp"
         android:onClick="onClickStart"
         android:text="Connect"
+        app:layout_constraintRight_toLeftOf="@id/stop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_deleteSQL" />
 
@@ -197,11 +219,12 @@
         android:id="@+id/stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="148dp"
+        android:layout_marginStart="144dp"
         android:layout_marginTop="8dp"
         android:onClick="onClickStop"
         android:text="Stop"
         app:layout_constraintLeft_toRightOf="@id/connect"
+        app:layout_constraintRight_toLeftOf="@id/clear"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_deleteSQL" />
 
@@ -209,7 +232,7 @@
         android:id="@+id/clear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="256dp"
+        android:layout_marginStart="252dp"
         android:layout_marginTop="8dp"
         android:onClick="onClickClear"
         android:text="Clear"
