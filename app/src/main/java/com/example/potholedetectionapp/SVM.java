@@ -1,10 +1,15 @@
 package com.example.potholedetectionapp;
 
+import android.content.Context;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,78 +24,51 @@ import com.example.potholedetectionapp.libsvm.svm_problem;
 
 
 public class SVM {
-    static int record_count = 60;
-    static int feature_count = 3;
-
-    // Labels[num_records]
-    static int[] labels = new int[record_count];
+    static int record_count = 1;
+    static int feature_count = 6;
 
     // Feature[feature_index][feature_value]
-    static double[][] features = new double[record_count][feature_count];
+//    static double[][] features = new double[record_count][feature_count];
 
-    //Create model that will train on datapoints
-    static svm_model svm_model_data;
+    /*
+    MAX: 1904.0
+    MIN: -2822.0
+    MAX: 4762.0
+    MIN: -5265.0
+    MAX: 3860.0
+    MIN: 207.0
+    MAX: 1819.0
+    MIN: -2888.0
+    MAX: 3719.0
+    MIN: -2538.0
+    MAX: 4729.0
+    MIN: 180.0
+     */
+    static double [] feature_max = { 1904, 4762, 3860, 1819, 3719, 4729 };
+    static double [] feature_min = { -2822, -5265, 207, -2888, -2538, 180 };
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public static void main(String[]args) {
 
-        readFile();
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public static svm_model load_model(Context contextApp)
+    {
+        //File file = null;
+        try {
+//            System.out.println(System.getProperty("user.dir"));
+//            String path = System.getProperty("user.dir") + "\\src\\com\\company\\svm_model";
+//            String path = "\\svm_model";
+//            System.out.println(path);
 
-        svm_model_data = svmTrain(features, labels, 50);
-
-        double[][] test_data = new double[10][3];
-
-        for(int i = 0; i < 10; i++){
-            test_data[i] = features[i+50];
+            return svm_load_model("test.txt", contextApp);
         }
-
-        double[] ypred = svmPredict(test_data, svm_model_data);
-
-        for (int i = 0; i < test_data.length; i++){
-            System.out.println("(Actual:" + labels[i+50] + " Prediction:" + ypred[i] + ")");
+        catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
-
-
     }
 
-
-
-    public static svm_model svmTrain(double[][] xtrain, int[] ytrain, int train_size) {
-
-        svm_problem prob = new svm_problem();
-        prob.y = new double[train_size];
-        prob.l = train_size;
-        prob.x = new svm_node[train_size][feature_count];
-
-        // For each record
-        for (int instance = 0; instance < train_size; instance++) {
-            double[] features = xtrain[instance];
-
-            prob.x[instance] = new svm_node[feature_count];
-            for (int feature = 0; feature < feature_count; feature++) {
-                svm_node node = new svm_node();
-                node.index = feature;
-                node.value = features[feature];
-                prob.x[instance][feature] = node;
-            }
-
-            // Set the label for this record.
-            prob.y[instance] = ytrain[instance];
-        }
-
-        svm_parameter param = new svm_parameter();
-        param.probability = 1;
-        param.gamma = 0.5;
-        param.nu = 0.5;
-        param.C = 10;
-        param.svm_type = svm_parameter.C_SVC;
-        param.kernel_type = svm_parameter.LINEAR;
-        param.cache_size = 20000;
-        param.eps = 0.001;
-
-        svm_model model = svm.svm_train(prob, param);
-
-        return model;
+    public static svm_model svm_load_model(String model_file_name, Context contextApp) throws IOException
+    {
+        //return svm_load_model(new BufferedReader(new FileReader(model_file_name)));
+        return svm.svm_load_model(new BufferedReader(new InputStreamReader(contextApp.getAssets().open(model_file_name))));//contextApp.getAssets()
     }
 
 
@@ -122,58 +100,27 @@ public class SVM {
 
     }
 
-    /**
-     *
-     */
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public static void readFile(){
 
-        //String base = "/Users/schachte/Desktop/movement_output.txt";
-        String base = "/Users/schachte/Desktop/movement_output.txt";
-
-        //String currentPath = new java.io.File(".").getCanonicalPath();
-
-        /*Paths may be used with the Files class to operate on files, directories, and other types of files.
-        For example, suppose we want a BufferedReader to read text from a file "access.log".
-        The file is located in a directory "logs" relative to the current working directory and is UTF-8 encoded. */
-        //Path path = FileSystems.getDefault().getPath("logs", "access.log");
-        Path path = FileSystems.getDefault().getPath("data", "data.txt");
-
-        try {
-            List<String> content;
-            content = (Files.readAllLines(Paths.get(base)));
-
-            String[] line_contents;
-            String[] line_features;
-
-            int current_record = 0;
-
-            //For each line in file
-            for(String line : content){
-                line_contents = line.split(",");
-                labels[current_record] = Integer.parseInt(line_contents[0]);
-
-                line_features = line_contents[1].split("#");
-                features[current_record][0] = Double.parseDouble(line_features[0]);
-                features[current_record][1] = Double.parseDouble(line_features[1]);
-                features[current_record][2] = Double.parseDouble(line_features[2]);
-
-//                System.out.println("Label: " + labels[current_record]);
-//                System.out.println("F1: " + features[current_record][0]);
-//                System.out.println("F2: " + features[current_record][1]);
-//                System.out.println("F3: " + features[current_record][2]);
-
-                current_record++;
+    public static void normalize_features(double[][] features) {
+        // static double[][] features = new double[record_count][feature_count];
+        for (int i = 0; i<record_count; i++){
+            for (int k = 0; k<feature_count; k++){
+                features[i][k] = normalize(features[i][k],feature_min[k], feature_max[k],0,1);
+                System.out.println("F"+ k + ": " + features[i][k]);
             }
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+    }
 
 
-        //Parse
-        // For each feature in line
-
+    /**
+     * Normalize x.
+     * @param x The value to be normalized.
+     * @return The result of the normalization.
+     */
+    public static double normalize(double x, double dataLow, double dataHigh, double normalizedLow, double normalizedHigh) {
+        return ((x - dataLow)
+                / (dataHigh - dataLow))
+                * (normalizedHigh - normalizedLow) + normalizedLow;
     }
 
 }
