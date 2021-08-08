@@ -206,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 DeleteAll();
+                id_test = 0;
             }
         });
 
@@ -628,14 +629,16 @@ public class MainActivity extends AppCompatActivity {
                                     //SVM ^//////////////////////////////////////////////////////////
 
                                     //Update SQL v///////////////////////////////////////////////
-                                    id_test = id_test+1;
-                                    String pothole_test = "true";
+                                    if (ypred[0]==1) {
+                                        id_test = id_test + 1;
+                                        String pothole_test = "true";
 
-                                    Date today = Calendar.getInstance().getTime();
-                                    long currentTimeInMilli = today.getTime();
+                                        Date today = Calendar.getInstance().getTime();
+                                        long currentTimeInMilli = today.getTime();
 
-                                    AddData(id_test, currentTimeInMilli, locationSQL.getLongitude(),
-                                           locationSQL.getLatitude(),pothole_test);
+                                        AddData(id_test, currentTimeInMilli, locationSQL.getLongitude(),
+                                                locationSQL.getLatitude(), pothole_test);
+                                    }
                                     //Update SQL ^///////////////////////////////////////////////
 
                                     textView.setText("");//ADDED TO CLEAR TEXT
@@ -647,7 +650,8 @@ public class MainActivity extends AppCompatActivity {
                                         textView.append (" Too High!");
                                     }
                                     textView.append ("\n");
-                                    textView.append ("(Actual:" + 1 + " Prediction:" + ypred[0] + ")");
+                                    //textView.append ("(Actual:" + 1 + " Prediction:" + ypred[0] + ")");
+                                    textView.append ("Pothole Prediction:" + ypred[0]);
                                 }
                             });
 
