@@ -20,11 +20,34 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.eclipse.paho.client.mqttv3.DisconnectedBufferOptions;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
+import org.eclipse.paho.client.mqttv3.MqttSecurityException;
+import org.eclipse.paho.client.mqttv3.MqttToken;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.os.Handler;
+import android.view.Gravity;
 import android.view.View;
 
 import android.view.Menu;
@@ -165,6 +188,31 @@ public class MainActivity extends AppCompatActivity {
                 if (sw_locationupdates.isChecked()) {
                     // turn on location tracking
                     startLocationUpdates();
+
+                    // Create and establish a MQTT-connection.
+                    String clientId = MqttClient.generateClientId();
+                    MqttAndroidClient client =
+                            new MqttAndroidClient(MainActivity.this, "tcp://broker.hivemq.com:1883", clientId);
+
+                    try {
+                        IMqttToken token = client.connect();
+                        token.setActionCallback(new IMqttActionListener() {
+                            @Override
+                            public void onSuccess(IMqttToken asyncActionToken) {
+                                // We are connected
+                                Toast.makeText(MainActivity.this, "Connected to MQTT broker", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                                // Something went wrong e.g. connection timeout or firewall problems
+                                Toast.makeText(MainActivity.this, "Not connected to MQTT broker", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } catch (MqttException e) {
+                        e.printStackTrace();
+                    }
+
                 } else {
                     // turn off tracking
                     stopLocationUpdates();
