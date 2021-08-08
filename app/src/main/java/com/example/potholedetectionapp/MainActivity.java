@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<Datapoint> datapoints;
     DatabaseHelper myDB;
     int id_test = 0;
+    Location locationSQL;
     //SQL VARIABLES ^///////////////////////////////////////////////////////////////////////////////
 
 
@@ -164,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
                 // save the location
                 Location location = locationResult.getLastLocation();
                 updateUIValues(location);
+                locationSQL = location;
             }
         };
 
@@ -321,6 +323,7 @@ public class MainActivity extends AppCompatActivity {
                     // we got permission. Put the values of location. XXX into the UI components
                     if (location !=null) {
                         updateUIValues(location);
+                        locationSQL = location;
                     }
                 }
             });
@@ -335,16 +338,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUIValues(Location location) {
-        //Update SQL v///////////////////////////////////////////////
-        id_test = id_test+1;
-        String pothole_test = "NA";
+        ////Update SQL v///////////////////////////////////////////////
+        //id_test = id_test+1;
+        //String pothole_test = "NA";
 
-        Date today = Calendar.getInstance().getTime();
-        long currentTimeInMilli = today.getTime();
+        //Date today = Calendar.getInstance().getTime();
+        //long currentTimeInMilli = today.getTime();
 
-        AddData(id_test, currentTimeInMilli, location.getLongitude(),
-                location.getLatitude(),pothole_test);
-        //Update SQL ^///////////////////////////////////////////////
+        //AddData(id_test, currentTimeInMilli, location.getLongitude(),
+        //       location.getLatitude(),pothole_test);
+        ////Update SQL ^///////////////////////////////////////////////
 
         // update all of the text view objects with a new location
         tv_lat.setText(String.valueOf(location.getLatitude()));
@@ -623,6 +626,17 @@ public class MainActivity extends AppCompatActivity {
                                     double[] ypred = svmPredict(features, test_load_model);
                                     System.out.println("(Actual:" + 1 + " Prediction:" + ypred[0] + ")");
                                     //SVM ^//////////////////////////////////////////////////////////
+
+                                    //Update SQL v///////////////////////////////////////////////
+                                    id_test = id_test+1;
+                                    String pothole_test = "true";
+
+                                    Date today = Calendar.getInstance().getTime();
+                                    long currentTimeInMilli = today.getTime();
+
+                                    AddData(id_test, currentTimeInMilli, locationSQL.getLongitude(),
+                                           locationSQL.getLatitude(),pothole_test);
+                                    //Update SQL ^///////////////////////////////////////////////
 
                                     textView.setText("");//ADDED TO CLEAR TEXT
                                     textView.append ("Temp = ");
