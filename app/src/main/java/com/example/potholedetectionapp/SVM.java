@@ -10,11 +10,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.example.potholedetectionapp.libsvm.svm_model;
 import com.example.potholedetectionapp.libsvm.svm;
@@ -69,6 +71,59 @@ public class SVM {
     {
         //return svm_load_model(new BufferedReader(new FileReader(model_file_name)));
         return svm.svm_load_model(new BufferedReader(new InputStreamReader(contextApp.getAssets().open(model_file_name))));//contextApp.getAssets()
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public static double [][] readTestFile (String file_name, Context contextApp) throws IOException
+    {
+        //return svm_load_model(new BufferedReader(new FileReader(model_file_name)));
+        //return svm.svm_load_model(new BufferedReader(new InputStreamReader(contextApp.getAssets().open(model_file_name))));//contextApp.getAssets()
+
+        int record_count_test = 1180;
+        int feature_count_test = 6;
+
+        // Labels[num_records]
+        int[] labels_test = new int[record_count_test];
+
+        // Feature[feature_index][feature_value]
+        double[][] features_test = new double[record_count_test][feature_count_test];
+
+        try {
+            List<String> content;
+            content =  new BufferedReader(new InputStreamReader(contextApp.getAssets().open(file_name),
+                    StandardCharsets.UTF_8)).lines().collect(Collectors.toList());
+
+            String[] line_contents;
+            String[] line_features;
+
+            int current_record = 0;
+
+            //For each line in file
+            for(String line : content){
+
+                line_features = line.split("\t");
+
+                for (int i=0; i < feature_count_test; i++) {
+                    features_test[current_record][i] = Double.parseDouble(line_features[i]);
+                }
+
+                labels_test[current_record] = Integer.parseInt(line_features[6]);
+
+                System.out.println("Label: " + labels_test[current_record]);
+                System.out.println("F1: " + features_test[current_record][0]);
+                System.out.println("F2: " + features_test[current_record][1]);
+                System.out.println("F3: " + features_test[current_record][2]);
+                System.out.println("F4: " + features_test[current_record][3]);
+                System.out.println("F5: " + features_test[current_record][4]);
+                System.out.println("F6: " + features_test[current_record][5]);
+
+                current_record++;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return features_test;
     }
 
 

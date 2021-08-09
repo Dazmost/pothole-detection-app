@@ -54,6 +54,7 @@ import java.util.UUID;
 import static com.example.potholedetectionapp.SVM.normalize_features;
 import static com.example.potholedetectionapp.SVM.svmPredict;
 import static com.example.potholedetectionapp.SVM.svm_load_model;
+import static com.example.potholedetectionapp.SVM.readTestFile;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends AppCompatActivity {
@@ -114,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
     //SVM VARIABLES v///////////////////////////////////////////////////////////////////////////////
     AssetManager am;
     svm_model test_load_model;
+    double [][] features_test;
     //SVM VARIABLES ^///////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -124,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
         //AssetManager am = getAssets();
         try {
             test_load_model = svm_load_model("svm_model", this);
+            features_test = readTestFile("readings_smacked_test.txt", this);
         } catch (IOException e) {
             e.printStackTrace();
         }
