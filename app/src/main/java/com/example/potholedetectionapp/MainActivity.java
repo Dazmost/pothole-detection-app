@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
     AssetManager am;
     svm_model test_load_model;
     double [][] features_test;
+    int feature_counter=0;
     //SVM VARIABLES ^///////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -618,17 +619,36 @@ public class MainActivity extends AppCompatActivity {
                                     //178	-98	2250	325	16	2126 Label:1
                                     //-78	26	2194	-54	53	2142 Label:0
                                     // Feature[feature_index][feature_value]
-                                    double[][] features = new double[1][6];
-                                    features[0][0] = 38;
-                                    features[0][1] = 445;
-                                    features[0][2] = 2733;
-                                    features[0][3] = 203;
-                                    features[0][4] = 389;
-                                    features[0][5] = 3031;
+                                    //double[][] features = new double[1][6];
+                                    //features[0][0] = 38;
+                                    //features[0][1] = 445;
+                                    //features[0][2] = 2733;
+                                    //features[0][3] = 203;
+                                    //features[0][4] = 389;
+                                    //features[0][5] = 3031;
 
-                                    normalize_features(features);
-                                    double[] ypred = svmPredict(features, test_load_model);
-                                    System.out.println("(Actual:" + 1 + " Prediction:" + ypred[0] + ")");
+                                    if (feature_counter >= features_test.length){
+                                        feature_counter = 0;
+                                    }
+                                    feature_counter = feature_counter + 1;
+                                    double [][] current_features = new double[1][6];
+                                    current_features[0][0] = features_test[feature_counter][0];
+                                    current_features[0][1] = features_test[feature_counter][1];
+                                    current_features[0][2] = features_test[feature_counter][2];
+                                    current_features[0][3] = features_test[feature_counter][3];
+                                    current_features[0][4] = features_test[feature_counter][4];
+                                    current_features[0][5] = features_test[feature_counter][5];
+
+                                    current_features = normalize_features(current_features);
+                                    double[] ypred = svmPredict(current_features, test_load_model);
+                                    System.out.println("(Actual:" + features_test[feature_counter][6] + " Prediction:" + ypred[0] + ")");
+                                    System.out.println("Label: " + features_test[feature_counter][6]);
+                                    System.out.println("F1: " + features_test[feature_counter][0]);
+                                    System.out.println("F2: " + features_test[feature_counter][1]);
+                                    System.out.println("F3: " + features_test[feature_counter][2]);
+                                    System.out.println("F4: " + features_test[feature_counter][3]);
+                                    System.out.println("F5: " + features_test[feature_counter][4]);
+                                    System.out.println("F6: " + features_test[feature_counter][5]);
                                     //SVM ^//////////////////////////////////////////////////////////
 
                                     //Update SQL v///////////////////////////////////////////////
@@ -645,16 +665,16 @@ public class MainActivity extends AppCompatActivity {
                                     //Update SQL ^///////////////////////////////////////////////
 
                                     textView.setText("");//ADDED TO CLEAR TEXT
-                                    textView.append ("Temp = ");
-                                    textView.append(String.valueOf(temp3));
-                                    textView.append (" Humidity = ");
-                                    textView.append(String.valueOf(humid3));
-                                    if (humid3>50){
-                                        textView.append (" Too High!");
-                                    }
+//                                    textView.append ("Temp = ");
+//                                    textView.append(String.valueOf(temp3));
+//                                    textView.append (" Humidity = ");
+//                                    textView.append(String.valueOf(humid3));
+//                                    if (humid3>50){
+//                                        textView.append (" Too High!");
+//                                    }
                                     textView.append ("\n");
                                     //textView.append ("(Actual:" + 1 + " Prediction:" + ypred[0] + ")");
-                                    textView.append ("Pothole Prediction:" + ypred[0]);
+                                    textView.append ("Pothole Prediction: " + ypred[0]);
                                 }
                             });
 

@@ -80,7 +80,8 @@ public class SVM {
         //return svm.svm_load_model(new BufferedReader(new InputStreamReader(contextApp.getAssets().open(model_file_name))));//contextApp.getAssets()
 
         int record_count_test = 1180;
-        int feature_count_test = 6;
+        int feature_count_test = 7;
+        int current_record = 0;
 
         // Labels[num_records]
         int[] labels_test = new int[record_count_test];
@@ -89,27 +90,29 @@ public class SVM {
         double[][] features_test = new double[record_count_test][feature_count_test];
 
         try {
-            List<String> content;
-            content =  new BufferedReader(new InputStreamReader(contextApp.getAssets().open(file_name),
-                    StandardCharsets.UTF_8)).lines().collect(Collectors.toList());
+//            List<String> content;
+//            content =  new BufferedReader(new InputStreamReader(contextApp.getAssets().open(file_name),
+//                    StandardCharsets.UTF_8)).lines().collect(Collectors.toList());
+            BufferedReader reader = new BufferedReader(new InputStreamReader(contextApp.getAssets().open(file_name)));
 
             String[] line_contents;
             String[] line_features;
 
-            int current_record = 0;
-
             //For each line in file
-            for(String line : content){
-
+//            for(String line : content){
+            String line = "";
+            while((line = reader.readLine()) != null) {//reader.ready()
+//                String line = reader.readLine();
                 line_features = line.split("\t");
 
                 for (int i=0; i < feature_count_test; i++) {
                     features_test[current_record][i] = Double.parseDouble(line_features[i]);
                 }
 
-                labels_test[current_record] = Integer.parseInt(line_features[6]);
+//                labels_test[current_record] = Integer.parseInt(line_features[6]);
 
-                System.out.println("Label: " + labels_test[current_record]);
+//                System.out.println("Label: " + labels_test[current_record]);
+                System.out.println("Label: " + features_test[current_record][6]);
                 System.out.println("F1: " + features_test[current_record][0]);
                 System.out.println("F2: " + features_test[current_record][1]);
                 System.out.println("F3: " + features_test[current_record][2]);
@@ -156,7 +159,7 @@ public class SVM {
     }
 
 
-    public static void normalize_features(double[][] features) {
+    public static double[][] normalize_features(double[][] features) {
         // static double[][] features = new double[record_count][feature_count];
         for (int i = 0; i<record_count; i++){
             for (int k = 0; k<feature_count; k++){
@@ -164,6 +167,7 @@ public class SVM {
                 System.out.println("F"+ k + ": " + features[i][k]);
             }
         }
+        return features;
     }
 
 
