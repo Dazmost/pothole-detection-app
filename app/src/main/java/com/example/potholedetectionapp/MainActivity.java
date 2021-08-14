@@ -44,6 +44,8 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.eclipse.paho.client.mqttv3.MqttToken;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -142,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
 
     // MQTT client.
     MqttAndroidClient client;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -691,8 +693,23 @@ public class MainActivity extends AppCompatActivity {
                                         AddData(id_test, currentTimeInMilli, locationSQL.getLongitude(),
                                                 locationSQL.getLatitude(), pothole_test);
 
+                                        String lon = String.valueOf(locationSQL.getLongitude());
+                                        String lat = String.valueOf(locationSQL.getLatitude());
+                                        String time_stamp = String.valueOf(currentTimeInMilli);
+
+                                        JSONObject json_obj = new JSONObject();
+
+                                        try {
+                                            json_obj.put("longitude", lon);
+                                            json_obj.put("latitude", lat);
+                                            json_obj.put("pothole", pothole_test);
+                                            json_obj.put("time", time_stamp);
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+
                                         String topic = "pothole";
-                                        String payload = "the payload";
+                                        String payload = json_obj.toString();
                                         byte[] encodedPayload = new byte[0];
                                         try {
                                             encodedPayload = payload.getBytes("UTF-8");
