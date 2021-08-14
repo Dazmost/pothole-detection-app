@@ -67,6 +67,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -139,6 +140,9 @@ public class MainActivity extends AppCompatActivity {
     svm_model test_load_model;
     //SVM VARIABLES ^///////////////////////////////////////////////////////////////////////////////
 
+    // MQTT client.
+    MqttAndroidClient client;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -214,9 +218,9 @@ public class MainActivity extends AppCompatActivity {
                     startLocationUpdates();
 
                     // Create and establish a MQTT-connection.
+                    // https://www.hivemq.com/blog/mqtt-client-library-enyclopedia-paho-android-service/
                     String clientId = MqttClient.generateClientId();
-                    MqttAndroidClient client =
-                            new MqttAndroidClient(MainActivity.this, "tcp://broker.hivemq.com:1883", clientId);
+                    client = new MqttAndroidClient(MainActivity.this, "mqtt://localhost:1883", clientId);
 
                     try {
                         IMqttToken token = client.connect();
@@ -686,6 +690,17 @@ public class MainActivity extends AppCompatActivity {
 
                                         AddData(id_test, currentTimeInMilli, locationSQL.getLongitude(),
                                                 locationSQL.getLatitude(), pothole_test);
+
+                                        String topic = "pothole";
+                                        String payload = "the payload";
+                                        byte[] encodedPayload = new byte[0];
+                                        try {
+                                            encodedPayload = payload.getBytes("UTF-8");
+                                            MqttMessage message = new MqttMessage(encodedPayload);
+                                            client.publish(topic, message);
+                                        } catch (UnsupportedEncodingException | MqttException e) {
+                                            e.printStackTrace();
+                                        }
                                     }
                                     //Update SQL ^///////////////////////////////////////////////
 
